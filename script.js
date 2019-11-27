@@ -1,37 +1,72 @@
 const width = 954;
-const height = 720;
-const padding = 10;
-const color = '#dddddd';
-const align = 'Centered';
-const inputOrder = false;
+const height = 1060;
+const format = d3.format(",d");
+const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-d3.csv('./data.csv')
-  .then(function(data) {
-      console.log(data);
-  })
-  .catch(function(error){
-     console.log(error);
-  })
-
-function data(source) {
-  const links = d3.csvParseRows(source, ([source, target, value, linkColor = color]) => 
-    (source && target ? {source, target, value: !value || isNaN(value = +value) ? 1 : value, color: linkColor} : null));
-
-  console.log(links);
-
-  const nodeByName = new Map();
-  for (const link of links) {
-    if (!nodeByName.has(link.source)) nodeByName.set(link.source, {name: link.source});
-    if (!nodeByName.has(link.target)) nodeByName.set(link.target, {name: link.target});
-  }
-
-  return {nodes: Array.from(nodeByName.values()), links};
+function treemap(data) {
+ return d3.treemap()
+    .size([width, height])
+    .padding(1)
+    .round(true)
+  (d3.hierarchy(data)
+    .sum(d => d.value)
+    .sort((a, b) => b.value - a.value));
 }
 
-var sankey = d3.sankey()
-    .nodeId(d => d.name)
-    .nodeAlign(d3[`sankey` + align])
-    .nodeSort(inputOrder ? null : undefined)
-    .nodeWidth(15)
-    .nodePadding(padding)
-    .extent([[0, 5], [width, height - 5]]);
+function uid() {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+}
+
+function chart(dat) {
+  const root = treemap(dat);
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .style("font", "10px sans-serif");
+
+  const leaf = svg.selectAll("g")
+    .data(root.leaves())
+    .join("g")
+      .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+  leaf.append("title")
+    .text(d => `${d.ancestors().reverse().map(d => d.data.name).join("/")}\n${format(d.value)}`);
+
+  leaf.append("rect")
+    .attr("id", function(d) {
+      d.leafUid = ("leaf" + uid());
+      d.leafHref = window.location.href + "#" + d.leafUid;
+      return d.leafUid;
+    })
+    .attr("fill", d => { while (d.depth > 1) d = d.parent; return color(d.data.name); })
+    .attr("fill-opacity", 0.6)
+    .attr("width", d => d.x1 - d.x0)
+    .attr("height", d => d.y1 - d.y0);
+
+  leaf.append("clipPath")
+      .attr("id", function(d) {
+        d.clipUid = "clip" + uid();
+        d.clipHref = window.location.href + "#" + d.clipUid;
+        return d.clipUid;
+      })
+    .append("use")
+      .attr("xlink:href", d => d.leafHref);
+
+  leaf.append("text")
+    .attr("clip-path", d => "url(" + d.clipHref + ")")
+    .selectAll("tspan")
+    .data(d => d.data.name.split(/(?=[A-Z][^A-Z])/g).concat(format(d.value)))
+    .join("tspan")
+      .attr("x", 3)
+      .attr("y", (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
+      .attr("fill-opacity", (d, i, nodes) => i === nodes.length - 1 ? 0.7 : null)
+      .text(d => d);
+
+  return svg.node();
+}
+
+$.ajax({url: './flare-2.json', success: function(result){
+    result = JSON.parse(result);
+    var svg = chart(result);
+    $("body")[0].append(svg);
+}});
