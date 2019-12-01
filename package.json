@@ -1,0 +1,24 @@
+{
+  "name": "d3-prog-summative",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awphi/d3-practical.git"
+  },
+  "author": "awphi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/awphi/d3-practical/issues"
+  },
+  "homepage": "https://github.com/awphi/d3-practical#readme",
+  "devDependencies": {
+    "eslint": "^6.7.2",
+    "eslint-plugin-react": "^7.17.0",
+    "standard": "^14.3.1"
+  }
+}
