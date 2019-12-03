@@ -66,7 +66,7 @@ function chart(dat) {
 }
 
 
-d3.json('https://raw.githubusercontent.com/awphi/d3-practical/master/flare-2.json').then(function(data) {
+d3.json('https://raw.githubusercontent.com/awphi/d3-prog-summative/master/flare-2.json').then(function(data) {
   var svg = chart(data);
   $("body")[0].append(svg);
 });
