@@ -1,7 +1,7 @@
 class Treemap {
-  constructor (width, height, data) {
-    this._format = d3.format(',d');
-    this._color = d3.scaleOrdinal(d3.schemeCategory10);
+  constructor (width, height, data, format = d3.format(',d'), color = d3.scaleOrdinal(d3.schemeCategory10)) {
+    this._format = format;
+    this._color = color;
 
     this._width = width;
     this._height = height;
