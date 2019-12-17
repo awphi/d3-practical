@@ -1,18 +1,31 @@
 class Treemap {
   constructor (width, height, data) {
-    this.width = width;
-    this.height = height;
-    this.format = d3.format(',d');
-    this.color = d3.scaleOrdinal(d3.schemeCategory10);
-    this.data = data;
+    this._format = d3.format(',d');
+    this._color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    this._width = width;
+    this._height = height;
+    this._data = data;
+    this._parents = [];
+    this.update()
+  }
+
+  update() {
+    for (var i = this._parents.length - 1; i >= 0; i--) {
+      this.node.parentNode.removeChild(this.node);
+    }
+
+    this._svg = d3.create('svg')
+      .attr('viewBox', [0, 0, this.width, this.height])
+      .style('font', '10px sans-serif');
+
+    if(this._data == null) {
+      return;
+    }
 
     this.root = Treemap.treemap(this.width, this.height, this.data);
 
-    this.svg = d3.create('svg')
-      .attr('viewBox', [0, 0, width, height])
-      .style('font', '10px sans-serif');
-
-    const leaf = this.svg.selectAll('g')
+    const leaf = this._svg.selectAll('g')
       .data(this.root.leaves())
       .join('g')
         .attr('transform', d => `translate(${d.x0},${d.y0})`);
@@ -41,11 +54,74 @@ class Treemap {
         .attr('y', (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
         .attr('fill-opacity', (d, i, nodes) => i === nodes.length - 1 ? 0.7 : null)
         .text(d => d);
+
+    for (var i = this._parents.length - 1; i >= 0; i--) {
+      $(this._parents[i]).append(this.node);
+    }
+  }
+
+  get color() {
+    return this._color;
+  }
+
+  set color(color) {
+    this._color = color;
+    this.update();
+  }
+
+  get format() {
+    return this._format;
+  }
+
+  set format(format) {
+    this._format = format;
+    this.update();
+  }
+
+  get data() {
+    return this._data;
+  }
+  
+  set data(data) {
+    this._data = data;
+    this.update();
+  }
+
+  get width() {
+    return this._width;
+  }
+
+  set width(width) {
+    this._width = width;
+    this.update();
+  }
+
+  get height() {
+    return this._height;
+  }
+
+  set height(aheight) {
+    this.height = aheight;
+    this.update();
+  }
+
+  get node() {
+    return this._svg.node();
+  }
+
+  appendInto(into) {
+    const $into = $(into);
+    $into.append(this.node);
+    this._parents.push($into);
+  }
+
+  static baseUrl () {
+    return window.location.origin + window.location.pathname;
   }
 
   static linkedUid (d, prefix) {
     d[prefix + 'Uid'] = 'clip' + Treemap.uid();
-    d[prefix + 'Href'] = window.location.href + '#' + d[prefix + 'Uid'];
+    d[prefix + 'Href'] = Treemap.baseUrl() + '#' + d[prefix + 'Uid'];
     return d[prefix + 'Uid'];
   }
 
@@ -63,7 +139,29 @@ class Treemap {
   }
 }
 
-$.ajax({ url: './flare-2.json' }).then((result) => {
-  const treemap1 = new Treemap(954, 1060, result);
-  $('#treemap1').append(treemap1.svg.node());
+$.ajax({ url: './data/land_all_area_2005.json' }).then((result) => {
+  const treemapStatic = new Treemap(954, 1060, result);
+  treemapStatic.appendInto('#treemap-static');
+});
+
+// Load an empty treemap into the wrapper
+const treemapDynamic = new Treemap(954, 1060, null);
+treemapDynamic.appendInto('#treemap-dynamic');
+
+// Used to cache the data to prevent lots of ajax calls
+const treemapDynamicData = {};
+
+// Cache the data
+$.ajax({ url: './data/land_forest_2005.json' }).then((result) => {
+  treemapDynamic.data = result;
+  treemapDynamicData["2005"] = result;
+});
+
+$.ajax({ url: './data/land_forest_2016.json' }).then((result) => {
+  treemapDynamicData["2016"] = result;
+});
+
+// Handler for switching between the cached data
+$("#dynamic-choose :input").change(function() {
+    treemapDynamic.data = treemapDynamicData[this.id.split("_")[0]]
 });
