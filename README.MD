@@ -1,0 +1,1 @@
+This documentation breaks down the treemap class itself and the data parser for my specific data taken from the UN 'land' dataset. It does not cover the page-specific codee used in the example to, for example, switch treemap colors or the AJAX calls to load data into the treemap is this is unneccesary bloat and not reusable code anyway.

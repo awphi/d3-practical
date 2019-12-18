@@ -1,9 +1,7 @@
-// Load an empty treemap into the wrapper
 const treemapDynamic = new Treemap(954, 1060, null);
-// Used to cache the data to prevent lots of ajax calls
-const treemapDynamicData = {};
-
 const treemapResizable = new Treemap(1000, 1000, null);
+
+const treemapDynamicData = {};
 
 treemapResizable.appendInto("#treemap-resizable");
 treemapDynamic.appendInto('#treemap-dynamic');
