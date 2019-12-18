@@ -13,14 +13,16 @@
 				<h6 class="text-center text-muted">by awphi<h6>
 			</div>
 		</div>
+
 		<hr>
+
 		<div class="row">
 			<div class="col-md-6">
 				<p class="text-center">Here is an example of the Treemap class in action at it's most basic level. It's a visual representation of the land area of all countries in the UN as of 2005. It demonstrates the text clipping capabilities of the treemap (which had to be heavily modified from functions that were available on <a href="https://observablehq.com/@d3/treemap">Observable</a> but not in vanilla JS/jQuery.</p>
 				<div id="treemap-static"></div>
 			</div>
 			<div class="col-md-6 text-center">
-				<p>This is an example of a Treemap which shows off the 'dynamic reloading' which I implemented. The dataset can be reloaded on the fly and the treemap will be rebuilt and refreshed ASAP. This feature was not available in the original but after converting it into a class it became apparent the getters/setters were redundant without dynamically updating the treemap in the DOM.</p>
+				<p>This is an example of a Treemap which shows off the 'dynamic reloading' which I implemented. The dataset can be reloaded on the fly and the treemap will be rebuilt and refreshed ASAP. This feature was not available in the original but after converting it into a class it became apparent the getters/setters were redundant without dynamically updating the treemap in the DOM. This shows the forest coverage of UN countries in 2005 vs. 2016.</p>
 				<div id="dynamic-choose" class="btn-group btn-group-toggle" style="margin-bottom: 1em;" data-toggle="buttons">
 					<label class="btn btn-secondary active">
 						<input type="radio" name="options" id="2005_forest" autocomplete="off" checked> 2005 Forest Coverage
@@ -32,10 +34,43 @@
 				<div id="treemap-dynamic"></div>
 			</div>
 		</div>
+
+		<div class="row" style="margin-top: 1em;">
+			<div class="col-md-8">
+				<div id="treemap-resizable"></div>
+			</div>
+			<div class="col-md-4 align-self-center">
+				<p class="text-center">This example shows of more of the dynamic updating with getters/setters but now with the sizing & color elements of the treemap. The treemap shows the total land area of UN countries in 2016.</p>
+				<label for="width-range">Width:</label>
+				<input type="range" class="custom-range" id="width-range" min="500" max="1500" value="1000" onchange="treemapResizable.width = Number(this.value);">
+				<label for="height-range">Height:</label>
+				<input type="range" class="custom-range" id="height-range" min="500" max="1500" value="1000" onchange="treemapResizable.height = Number(this.value);">
+				<label for="color-choose">Color Scheme:</label>
+				<div id="color-choose" class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%;">
+					<label class="btn btn-secondary active">
+						<input type="radio" name="options" id="schemeCategory10" autocomplete="off" checked>Category 10
+					</label>
+					<label class="btn btn-secondary active">
+						<input type="radio" name="options" id="schemeAccent" autocomplete="off">Accent
+					</label>
+					<label class="btn btn-secondary">
+						<input type="radio" name="options" id="schemeDark2" autocomplete="off">Dark 2
+					</label>
+					<label class="btn btn-secondary">
+						<input type="radio" name="options" id="schemePaired" autocomplete="off">Paired
+					</label>
+					<label class="btn btn-secondary">
+						<input type="radio" name="options" id="schemeTableau10" autocomplete="off">Tableau 10
+					</label>
+				</div>
+			</div>
+		</div>
+
 		<hr>
+
 		<div class="row">
 			<div class="col-md-12">
-				<p class="text-muted text-center">d3 class treemap modified from the <a href="https://observablehq.com/@d3/treemap">original</a> by <a href="https://github.com/mbostock">Mike Bostock</a>, creator of d3.</p>
+				<p class="text-muted text-center">d3 treemap modified from the <a href="https://observablehq.com/@d3/treemap">original</a> by <a href="https://github.com/mbostock">Mike Bostock</a>, creator of d3.</p>
 				<p class="text-center text-muted">Formatting & other utilities from <a href="https://getbootstrap.com/">Bootstrap</a> and <a href="https://jquery.com/">jQuery</a>.</p>
 				<p class="text-muted text-center">Treemap data from <a href="http://data.un.org/">the UN's 'Land' dataset from 2005, 2010, 2016 & 2018</a> - provided by <a href="https://github.com/awesomedata/awesome-public-datasets">Awesome Public Datasets</a>.</p>
 			</div>
@@ -46,6 +81,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 	<script src="https://d3js.org/d3.v5.min.js"></script>
-    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="treemap.js"></script>
+    <script type="text/javascript" src="page.js"></script>
 </body>
 </html>

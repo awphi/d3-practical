@@ -100,8 +100,8 @@ class Treemap {
     return this._height;
   }
 
-  set height(aheight) {
-    this.height = aheight;
+  set height(height) {
+    this._height = height;
     this.update();
   }
 
@@ -138,30 +138,3 @@ class Treemap {
     return Math.random().toString(36).substring(2) + Date.now().toString(36);
   }
 }
-
-$.ajax({ url: './data/land_all_area_2005.json' }).then((result) => {
-  const treemapStatic = new Treemap(954, 1060, result);
-  treemapStatic.appendInto('#treemap-static');
-});
-
-// Load an empty treemap into the wrapper
-const treemapDynamic = new Treemap(954, 1060, null);
-treemapDynamic.appendInto('#treemap-dynamic');
-
-// Used to cache the data to prevent lots of ajax calls
-const treemapDynamicData = {};
-
-// Cache the data
-$.ajax({ url: './data/land_forest_2005.json' }).then((result) => {
-  treemapDynamic.data = result;
-  treemapDynamicData["2005"] = result;
-});
-
-$.ajax({ url: './data/land_forest_2016.json' }).then((result) => {
-  treemapDynamicData["2016"] = result;
-});
-
-// Handler for switching between the cached data
-$("#dynamic-choose :input").change(function() {
-    treemapDynamic.data = treemapDynamicData[this.id.split("_")[0]]
-});
